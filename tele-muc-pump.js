@@ -1,24 +1,27 @@
-var http2 = require("http2")
-var telestreamitize = require("telestreamitize")
+var 
+  fs= require("fs"),
+  path= require("path"),
+  http2 = require("http2"),
+  telestreamitize = require("telestreamitize")
 
 // The callback to handle requests
 function createTeleMucPumpHandler(opts){
-	opts= opts|| {}
-	opts.telestream= opts.telestream|| new telestreamitize()
-	return function onRequest(request, response){
+	function teleMucHandler(request, response, cb){
 		if(request.url == '/messages.stream'){
 			// guard 
-			if(opts.guard && !response.push){
+			if(teleMucHandler.guard && !response.push){
 				response.writeHead(400)
 				response.end()
 				return
 			}
-			opts.telestream.on('*', function(msg){
-				var push= response.push('/'/ + msg.sender + '/' + msg.time)
+			function pushMsg(msg){
+				var push= response.push('/' + msg.sender + '/' + msg.time)
 				push.writeHead(200)
 				push.end(JSON.stringify(msg))
-			})
-			if(opts.close){
+			}
+			teleMucHandler.telestream.on('*', pushMsg)
+			// TODO: cleanup listener when connection closes
+			if(teleMucHandler.close){
 				response.writeHead(200)
 				response.end()
 			}else{
@@ -40,8 +43,13 @@ function createTeleMucPumpHandler(opts){
 				// g
 				// &verticalTab;
 			}
+		}else if(cb){
+			cb()
 		}
 	}
+	teleMucHandler.telestream= opts&& opts.telestream|| new telestreamitize()
+	teleMucHandler.guard= opts&& opts.guard|| null
+	teleMucHandler.close= opts&& opts.close|| null
 }
 
 module.exports= createTeleMucPumpHandler
@@ -60,7 +68,7 @@ module.exports.main= function createServer(telestream){
 			cert: fs.readFileSync(path.join(__dirname, "/localhost.crt"))
 		}, module.exports())
 	}
-	server.listen(process.env.HTTP2_PORT || 8080)
+	server.listen(process.env.PORT || 8080)
 }
 
 if(module === require.main){
