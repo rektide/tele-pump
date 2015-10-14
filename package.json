@@ -1,8 +1,8 @@
 {
 	"name": "tele-muc-pump",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Feed Telestreamitize into an http2 pump",
-	"main": "channel-pump.js",
+	"main": "tele-muc-pump.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
@@ -17,7 +17,13 @@
 	},
 	"homepage": "https://github.com/rektide/channel-push",
 	"dependencies": {
-		"http2": "^3.2.0",
-		"telestreamitize": "^1.0.0"
+		"koa": "^1.1.0",
+		"koa-router": "^5.2.3",
+		"spdy": "^2.0.5",
+		"telestreamitize": "^1.0.0",
+		"webpush-pump": "^1.0.0"
+	},
+	"devDependencies": {
+		"event-webpush": "^1.0.0"
 	}
 }
