@@ -47,5 +47,6 @@ Telestreamitize({
 			"Location": ["messages", msg.room.substring(1), msg.time].join( "/")
 		  }
 		push.send( JSON.stringify( msg), headers, ctx)
+		console.log(msg.time, msg.sender, msg.content)
 	})
 })
